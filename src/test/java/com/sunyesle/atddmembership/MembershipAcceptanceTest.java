@@ -2,6 +2,8 @@ package com.sunyesle.atddmembership;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sunyesle.atddmembership.dto.MembershipRequest;
+import com.sunyesle.atddmembership.dto.MembershipResponse;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
