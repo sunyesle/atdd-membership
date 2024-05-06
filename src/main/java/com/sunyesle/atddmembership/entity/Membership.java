@@ -15,4 +15,10 @@ public class Membership {
     private String membershipName;
 
     private Integer point;
+
+    public Membership(String userId, String membershipName, Integer point) {
+        this.userId = userId;
+        this.membershipName = membershipName;
+        this.point = point;
+    }
 }

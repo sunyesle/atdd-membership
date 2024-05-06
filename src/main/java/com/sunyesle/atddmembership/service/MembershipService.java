@@ -2,6 +2,7 @@ package com.sunyesle.atddmembership.service;
 
 import com.sunyesle.atddmembership.dto.MembershipRequest;
 import com.sunyesle.atddmembership.dto.MembershipResponse;
+import com.sunyesle.atddmembership.entity.Membership;
 import com.sunyesle.atddmembership.repository.MembershipRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ public class MembershipService {
 
     @Transactional
     public MembershipResponse createMembership(MembershipRequest request) {
-        return null;
+        Membership membership = membershipRepository.save(new Membership(request.getUserId(), request.getMembershipName(), request.getPoint()));
+        return new MembershipResponse(membership.getId(), membership.getMembershipName());
     }
 }
