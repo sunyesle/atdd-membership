@@ -15,8 +15,8 @@ public class MembershipService {
     private final MembershipRepository membershipRepository;
 
     @Transactional
-    public MembershipResponse createMembership(MembershipRequest request) {
-        Membership membership = membershipRepository.save(new Membership(request.getUserId(), request.getMembershipName(), request.getPoint()));
+    public MembershipResponse createMembership(String userId, MembershipRequest request) {
+        Membership membership = membershipRepository.save(new Membership(userId, request.getMembershipName(), request.getPoint()));
         return new MembershipResponse(membership.getId(), membership.getMembershipName());
     }
 }

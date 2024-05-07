@@ -14,13 +14,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
+import static com.sunyesle.atddmembership.constants.MembershipConstants.USER_ID_HEADER;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class MembershipAcceptanceTest {
-
-    final static String USER_ID_HEADER = "X-USER-ID";
 
     @Autowired
     MembershipRepository membershipRepository;
