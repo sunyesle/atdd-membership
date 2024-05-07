@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sunyesle.atddmembership.dto.MembershipRequest;
 import com.sunyesle.atddmembership.dto.MembershipResponse;
+import com.sunyesle.atddmembership.repository.MembershipRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class MembershipAcceptanceTest {
+
+    final static String USER_ID_HEADER = "X-USER-ID";
+
+    @Autowired
+    MembershipRepository membershipRepository;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -36,12 +42,13 @@ class MembershipAcceptanceTest {
         String userId = "testUserId";
         String membershipName = "네이버";
         Integer point = 10000;
-        MembershipRequest request = new MembershipRequest(userId, membershipName, point);
+        MembershipRequest request = new MembershipRequest(membershipName, point);
 
         MembershipResponse response =
         given()
                 .basePath("/api/v1/memberships")
                 .contentType(ContentType.JSON)
+                .header(USER_ID_HEADER, userId)
                 .body(objectMapper.writeValueAsString(request))
         .when()
                 .post()
