@@ -2,8 +2,10 @@ package com.sunyesle.atddmembership;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sunyesle.atddmembership.dto.MembershipDetailResponse;
 import com.sunyesle.atddmembership.dto.MembershipRequest;
 import com.sunyesle.atddmembership.dto.MembershipResponse;
+import com.sunyesle.atddmembership.entity.Membership;
 import com.sunyesle.atddmembership.repository.MembershipRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -15,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
 
 import static com.sunyesle.atddmembership.constants.MembershipConstants.USER_ID_HEADER;
 import static io.restassured.RestAssured.given;
@@ -66,5 +70,32 @@ class MembershipAcceptanceTest {
         MembershipResponse membership = response.as(MembershipResponse.class);
         assertThat(membership.getId()).isNotNull();
         assertThat(membership.getMembershipName()).isEqualTo(membershipName);
+    }
+
+    @Test
+    void 멤버십_목록을_조회한다() throws JsonProcessingException {
+        // given
+        String userId = "testUserId";
+        membershipRepository.save(new Membership(userId, "네이버", 10000));
+        membershipRepository.save(new Membership(userId, "카카오", 5000));
+
+        // when
+        ExtractableResponse<Response> response =
+                given()
+                        .log().all()
+                        .basePath("/api/v1/memberships")
+                        .contentType(ContentType.JSON)
+                        .header(USER_ID_HEADER, userId)
+                .when()
+                        .get()
+                .then()
+                        .log().all()
+                        .extract();
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+
+        List<MembershipDetailResponse> memberships = response.jsonPath().getList(".", MembershipDetailResponse.class);
+        assertThat(memberships).hasSize(2);
     }
 }
