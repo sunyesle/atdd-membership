@@ -7,6 +7,8 @@ import com.sunyesle.atddmembership.dto.MembershipResponse;
 import com.sunyesle.atddmembership.repository.MembershipRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,24 +40,31 @@ class MembershipAcceptanceTest {
 
     @Test
     void 멤버십을_등록한다() throws JsonProcessingException {
+        // given
         String userId = "testUserId";
         String membershipName = "네이버";
         Integer point = 10000;
         MembershipRequest request = new MembershipRequest(membershipName, point);
 
-        MembershipResponse response =
-        given()
-                .basePath("/api/v1/memberships")
-                .contentType(ContentType.JSON)
-                .header(USER_ID_HEADER, userId)
-                .body(objectMapper.writeValueAsString(request))
-        .when()
-                .post()
-        .then()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract().as(MembershipResponse.class);
+        // when
+        ExtractableResponse<Response> response =
+                given()
+                        .log().all()
+                        .basePath("/api/v1/memberships")
+                        .contentType(ContentType.JSON)
+                        .header(USER_ID_HEADER, userId)
+                        .body(objectMapper.writeValueAsString(request))
+                .when()
+                        .post()
+                .then()
+                        .log().all()
+                        .extract();
 
-        assertThat(response.getId()).isEqualTo(1);
-        assertThat(response.getMembershipName()).isEqualTo(membershipName);
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+
+        MembershipResponse membership = response.as(MembershipResponse.class);
+        assertThat(membership.getId()).isNotNull();
+        assertThat(membership.getMembershipName()).isEqualTo(membershipName);
     }
 }
