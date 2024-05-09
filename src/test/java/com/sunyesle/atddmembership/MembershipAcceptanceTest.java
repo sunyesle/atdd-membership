@@ -99,7 +99,6 @@ class MembershipAcceptanceTest {
         assertThat(memberships).hasSize(2);
     }
 
-
     @Test
     void 멤버십을_조회한다() {
         // given
@@ -129,5 +128,31 @@ class MembershipAcceptanceTest {
         assertThat(membership.getMembershipName()).isEqualTo("네이버");
         assertThat(membership.getPoint()).isEqualTo(10000);
         assertThat(membership.getCreatedAt()).isNotNull();
+    }
+
+    @Test
+    void 멤버십을_삭제한다() {
+        // given
+        String userId = "testUserId";
+        Long membershipId = 1L;
+        membershipRepository.save(Membership.builder().userId(userId).membershipName("네이버").point(10000).build());
+
+        // when
+        ExtractableResponse<Response> response =
+                given()
+                        .log().all()
+                        .basePath("/api/v1/memberships/" + membershipId)
+                        .contentType(ContentType.JSON)
+                        .header(USER_ID_HEADER, userId)
+                .when()
+                        .delete()
+                .then()
+                        .log().all()
+                        .extract();
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+
+        assertThat(membershipRepository.findById(membershipId)).isEmpty();
     }
 }

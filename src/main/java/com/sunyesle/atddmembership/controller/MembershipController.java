@@ -37,4 +37,10 @@ public class MembershipController {
         MembershipDetailResponse response = membershipService.getMembership(userId, id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMembership(@RequestHeader(USER_ID_HEADER) String userId, @PathVariable Long id) {
+        membershipService.deleteMembership(userId, id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

@@ -38,4 +38,13 @@ public class MembershipService {
         }
         return MembershipDetailResponse.of(membership);
     }
+
+    @Transactional
+    public void deleteMembership(String userId, Long id) {
+        Membership membership = membershipRepository.findById(id).orElseThrow(() -> new MembershipException(MembershipErrorCode.MEMBERSHIP_NOT_FOUND));
+        if(!userId.equals(membership.getUserId())){
+            throw new MembershipException(MembershipErrorCode.NOT_MEMBERSHIP_OWNER);
+        }
+        membershipRepository.deleteById(id);
+    }
 }
