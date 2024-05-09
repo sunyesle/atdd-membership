@@ -76,8 +76,8 @@ class MembershipAcceptanceTest {
     void 멤버십_목록을_조회한다() {
         // given
         String userId = "testUserId";
-        membershipRepository.save(new Membership(userId, "네이버", 10000));
-        membershipRepository.save(new Membership(userId, "카카오", 5000));
+        membershipRepository.save(Membership.builder().userId(userId).membershipName("네이버").point(10000).build());
+        membershipRepository.save(Membership.builder().userId(userId).membershipName("카카오").point(5000).build());
 
         // when
         ExtractableResponse<Response> response =
@@ -105,8 +105,8 @@ class MembershipAcceptanceTest {
         // given
         String userId = "testUserId";
         Long membershipId = 1L;
-        membershipRepository.save(new Membership(userId, "네이버", 10000));
-        membershipRepository.save(new Membership(userId, "카카오", 5000));
+        membershipRepository.save(Membership.builder().userId(userId).membershipName("네이버").point(10000).build());
+        membershipRepository.save(Membership.builder().userId(userId).membershipName("카카오").point(5000).build());
 
         // when
         ExtractableResponse<Response> response =

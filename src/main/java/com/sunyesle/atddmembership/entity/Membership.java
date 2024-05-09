@@ -1,6 +1,7 @@
 package com.sunyesle.atddmembership.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -25,15 +26,10 @@ public class Membership {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    public Membership(String userId, String membershipName, Integer point) {
-        this.userId = userId;
-        this.membershipName = membershipName;
-        this.point = point;
-    }
-
     public Membership() {
     }
 
+    @Builder
     public Membership(Long id, String userId, String membershipName, Integer point, LocalDateTime createdAt) {
         this.id = id;
         this.userId = userId;

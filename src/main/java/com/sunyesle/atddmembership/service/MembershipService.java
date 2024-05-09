@@ -22,7 +22,7 @@ public class MembershipService {
 
     @Transactional
     public MembershipResponse createMembership(String userId, MembershipRequest request) {
-        Membership membership = membershipRepository.save(new Membership(userId, request.getMembershipName(), request.getPoint()));
+        Membership membership = membershipRepository.save(Membership.builder().userId(userId).membershipName(request.getMembershipName()).point(request.getPoint()).build());
         return new MembershipResponse(membership.getId(), membership.getMembershipName());
     }
 
