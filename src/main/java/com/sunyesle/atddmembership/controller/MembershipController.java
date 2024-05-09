@@ -4,6 +4,7 @@ import com.sunyesle.atddmembership.dto.MembershipDetailResponse;
 import com.sunyesle.atddmembership.dto.MembershipRequest;
 import com.sunyesle.atddmembership.dto.MembershipResponse;
 import com.sunyesle.atddmembership.service.MembershipService;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,12 @@ public class MembershipController {
     @GetMapping
     public ResponseEntity<List<MembershipDetailResponse>> createMembership(@RequestHeader(USER_ID_HEADER) String userId) {
         List<MembershipDetailResponse> response = membershipService.getMemberships(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MembershipDetailResponse> createMembership(@RequestHeader(USER_ID_HEADER) String userId, @PathVariable Long id) {
+        MembershipDetailResponse response = membershipService.getMembership(userId, id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

@@ -73,7 +73,7 @@ class MembershipAcceptanceTest {
     }
 
     @Test
-    void 멤버십_목록을_조회한다() throws JsonProcessingException {
+    void 멤버십_목록을_조회한다() {
         // given
         String userId = "testUserId";
         membershipRepository.save(new Membership(userId, "네이버", 10000));
@@ -97,5 +97,37 @@ class MembershipAcceptanceTest {
 
         List<MembershipDetailResponse> memberships = response.jsonPath().getList(".", MembershipDetailResponse.class);
         assertThat(memberships).hasSize(2);
+    }
+
+
+    @Test
+    void 멤버십을_조회한다() {
+        // given
+        String userId = "testUserId";
+        Long membershipId = 1L;
+        membershipRepository.save(new Membership(userId, "네이버", 10000));
+        membershipRepository.save(new Membership(userId, "카카오", 5000));
+
+        // when
+        ExtractableResponse<Response> response =
+                given()
+                        .log().all()
+                        .basePath("/api/v1/memberships/" + membershipId)
+                        .contentType(ContentType.JSON)
+                        .header(USER_ID_HEADER, userId)
+                .when()
+                        .get()
+                .then()
+                        .log().all()
+                        .extract();
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+
+        MembershipDetailResponse membership = response.as(MembershipDetailResponse.class);
+        assertThat(membership.getId()).isEqualTo(membershipId);
+        assertThat(membership.getMembershipName()).isEqualTo("네이버");
+        assertThat(membership.getPoint()).isEqualTo(10000);
+        assertThat(membership.getCreatedAt()).isNotNull();
     }
 }

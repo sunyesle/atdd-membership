@@ -28,4 +28,8 @@ public class MembershipService {
         List<Membership> memberships = membershipRepository.findAllByUserId(userId);
         return memberships.stream().map(MembershipDetailResponse::of).collect(Collectors.toList());
     }
+
+    public MembershipDetailResponse getMembership(String userId, Long id) {
+        return null;
+    }
 }
