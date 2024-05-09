@@ -27,13 +27,13 @@ public class MembershipController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MembershipDetailResponse>> createMembership(@RequestHeader(USER_ID_HEADER) String userId) {
+    public ResponseEntity<List<MembershipDetailResponse>> getMemberships(@RequestHeader(USER_ID_HEADER) String userId) {
         List<MembershipDetailResponse> response = membershipService.getMemberships(userId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MembershipDetailResponse> createMembership(@RequestHeader(USER_ID_HEADER) String userId, @PathVariable Long id) {
+    public ResponseEntity<MembershipDetailResponse> getMembership(@RequestHeader(USER_ID_HEADER) String userId, @PathVariable Long id) {
         MembershipDetailResponse response = membershipService.getMembership(userId, id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
