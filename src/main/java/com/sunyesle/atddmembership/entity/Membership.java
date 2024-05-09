@@ -1,8 +1,10 @@
 package com.sunyesle.atddmembership.entity;
 
+import com.sunyesle.atddmembership.enums.MembershipType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @EntityListeners(AuditingEntityListener.class)
+@ToString
 public class Membership {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +21,8 @@ public class Membership {
 
     private String userId;
 
-    private String membershipName;
+    @Enumerated(EnumType.STRING)
+    private MembershipType membershipType;
 
     private Integer point;
 
@@ -30,10 +34,10 @@ public class Membership {
     }
 
     @Builder
-    public Membership(Long id, String userId, String membershipName, Integer point, LocalDateTime createdAt) {
+    public Membership(Long id, String userId, MembershipType membershipType, Integer point, LocalDateTime createdAt) {
         this.id = id;
         this.userId = userId;
-        this.membershipName = membershipName;
+        this.membershipType = membershipType;
         this.point = point;
         this.createdAt = createdAt;
     }

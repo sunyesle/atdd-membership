@@ -2,6 +2,7 @@ package com.sunyesle.atddmembership;
 
 import com.sunyesle.atddmembership.dto.MembershipDetailResponse;
 import com.sunyesle.atddmembership.entity.Membership;
+import com.sunyesle.atddmembership.enums.MembershipType;
 import com.sunyesle.atddmembership.exception.MembershipErrorCode;
 import com.sunyesle.atddmembership.exception.MembershipException;
 import com.sunyesle.atddmembership.repository.MembershipRepository;
@@ -26,7 +27,6 @@ public class MembershipServiceTest {
 
     private MembershipService membershipService;
 
-
     @BeforeEach
     void setUp() {
         membershipService = new MembershipService(repository);
@@ -38,7 +38,7 @@ public class MembershipServiceTest {
         String userId = "testUser";
         Long membershipId = 1L;
         given(repository.findById(membershipId))
-                .willReturn(Optional.of(new Membership(membershipId, userId, "네이버", 10000, LocalDateTime.now())));
+                .willReturn(Optional.of(new Membership(membershipId, userId, MembershipType.NAVER, 10000, LocalDateTime.now())));
 
         // when
         MembershipDetailResponse response = membershipService.getMembership(userId, membershipId);
@@ -68,7 +68,7 @@ public class MembershipServiceTest {
         String userId = "testUser";
         Long membershipId = 1L;
         given(repository.findById(membershipId))
-                .willReturn(Optional.of(new Membership(membershipId, "anotherUser", "네이버", 10000, LocalDateTime.now())));
+                .willReturn(Optional.of(new Membership(membershipId, "anotherUser", MembershipType.NAVER, 10000, LocalDateTime.now())));
 
         // when then
         assertThatThrownBy(() -> { membershipService.getMembership(userId, membershipId); })

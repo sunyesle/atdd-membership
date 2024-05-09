@@ -6,6 +6,7 @@ import com.sunyesle.atddmembership.dto.MembershipDetailResponse;
 import com.sunyesle.atddmembership.dto.MembershipRequest;
 import com.sunyesle.atddmembership.dto.MembershipResponse;
 import com.sunyesle.atddmembership.entity.Membership;
+import com.sunyesle.atddmembership.enums.MembershipType;
 import com.sunyesle.atddmembership.repository.MembershipRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -46,9 +47,9 @@ class MembershipAcceptanceTest {
     void 멤버십을_등록한다() throws JsonProcessingException {
         // given
         String userId = "testUserId";
-        String membershipName = "네이버";
+        MembershipType membershipType = MembershipType.NAVER;
         Integer point = 10000;
-        MembershipRequest request = new MembershipRequest(membershipName, point);
+        MembershipRequest request = new MembershipRequest(membershipType, point);
 
         // when
         ExtractableResponse<Response> response =
@@ -69,15 +70,15 @@ class MembershipAcceptanceTest {
 
         MembershipResponse membership = response.as(MembershipResponse.class);
         assertThat(membership.getId()).isNotNull();
-        assertThat(membership.getMembershipName()).isEqualTo(membershipName);
+        assertThat(membership.getMembershipType()).isEqualTo(membershipType);
     }
 
     @Test
     void 멤버십_목록을_조회한다() {
         // given
         String userId = "testUserId";
-        membershipRepository.save(Membership.builder().userId(userId).membershipName("네이버").point(10000).build());
-        membershipRepository.save(Membership.builder().userId(userId).membershipName("카카오").point(5000).build());
+        membershipRepository.save(Membership.builder().userId(userId).membershipType(MembershipType.NAVER).point(10000).build());
+        membershipRepository.save(Membership.builder().userId(userId).membershipType(MembershipType.KAKAO).point(5000).build());
 
         // when
         ExtractableResponse<Response> response =
@@ -103,15 +104,14 @@ class MembershipAcceptanceTest {
     void 멤버십을_조회한다() {
         // given
         String userId = "testUserId";
-        Long membershipId = 1L;
-        membershipRepository.save(Membership.builder().userId(userId).membershipName("네이버").point(10000).build());
-        membershipRepository.save(Membership.builder().userId(userId).membershipName("카카오").point(5000).build());
+        Membership info = membershipRepository.save(Membership.builder().userId(userId).membershipType(MembershipType.NAVER).point(10000).build());
+        membershipRepository.save(Membership.builder().userId(userId).membershipType(MembershipType.KAKAO).point(5000).build());
 
         // when
         ExtractableResponse<Response> response =
                 given()
                         .log().all()
-                        .basePath("/api/v1/memberships/" + membershipId)
+                        .basePath("/api/v1/memberships/" + info.getId())
                         .contentType(ContentType.JSON)
                         .header(USER_ID_HEADER, userId)
                 .when()
@@ -124,8 +124,8 @@ class MembershipAcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
 
         MembershipDetailResponse membership = response.as(MembershipDetailResponse.class);
-        assertThat(membership.getId()).isEqualTo(membershipId);
-        assertThat(membership.getMembershipName()).isEqualTo("네이버");
+        assertThat(membership.getId()).isEqualTo(info.getId());
+        assertThat(membership.getMembershipType()).isEqualTo(MembershipType.NAVER);
         assertThat(membership.getPoint()).isEqualTo(10000);
         assertThat(membership.getCreatedAt()).isNotNull();
     }
@@ -134,14 +134,13 @@ class MembershipAcceptanceTest {
     void 멤버십을_삭제한다() {
         // given
         String userId = "testUserId";
-        Long membershipId = 1L;
-        membershipRepository.save(Membership.builder().userId(userId).membershipName("네이버").point(10000).build());
+        Membership info = membershipRepository.save(Membership.builder().userId(userId).membershipType(MembershipType.NAVER).point(10000).build());
 
         // when
         ExtractableResponse<Response> response =
                 given()
                         .log().all()
-                        .basePath("/api/v1/memberships/" + membershipId)
+                        .basePath("/api/v1/memberships/" + info.getId())
                         .contentType(ContentType.JSON)
                         .header(USER_ID_HEADER, userId)
                 .when()
@@ -153,6 +152,6 @@ class MembershipAcceptanceTest {
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
 
-        assertThat(membershipRepository.findById(membershipId)).isEmpty();
+        assertThat(membershipRepository.findById(info.getId())).isEmpty();
     }
 }
