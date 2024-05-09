@@ -4,6 +4,8 @@ import com.sunyesle.atddmembership.dto.MembershipDetailResponse;
 import com.sunyesle.atddmembership.dto.MembershipRequest;
 import com.sunyesle.atddmembership.dto.MembershipResponse;
 import com.sunyesle.atddmembership.entity.Membership;
+import com.sunyesle.atddmembership.exception.MembershipErrorCode;
+import com.sunyesle.atddmembership.exception.MembershipException;
 import com.sunyesle.atddmembership.repository.MembershipRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,10 @@ public class MembershipService {
     }
 
     public MembershipDetailResponse getMembership(String userId, Long id) {
-        Membership membership = membershipRepository.findById(id).get();
+        Membership membership = membershipRepository.findById(id).orElseThrow(() -> new MembershipException(MembershipErrorCode.MEMBERSHIP_NOT_FOUND));
+        if(!userId.equals(membership.getUserId())){
+            throw new MembershipException(MembershipErrorCode.NOT_MEMBERSHIP_OWNER);
+        }
         return MembershipDetailResponse.of(membership);
     }
 }
