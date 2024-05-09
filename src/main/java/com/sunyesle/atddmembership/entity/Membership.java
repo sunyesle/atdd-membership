@@ -33,4 +33,12 @@ public class Membership {
 
     public Membership() {
     }
+
+    public Membership(Long id, String userId, String membershipName, Integer point, LocalDateTime createdAt) {
+        this.id = id;
+        this.userId = userId;
+        this.membershipName = membershipName;
+        this.point = point;
+        this.createdAt = createdAt;
+    }
 }

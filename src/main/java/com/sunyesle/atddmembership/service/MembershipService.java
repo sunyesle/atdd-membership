@@ -30,6 +30,7 @@ public class MembershipService {
     }
 
     public MembershipDetailResponse getMembership(String userId, Long id) {
-        return null;
+        Membership membership = membershipRepository.findById(id).get();
+        return MembershipDetailResponse.of(membership);
     }
 }
