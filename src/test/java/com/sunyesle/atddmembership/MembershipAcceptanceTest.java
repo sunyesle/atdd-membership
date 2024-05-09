@@ -41,6 +41,7 @@ class MembershipAcceptanceTest {
     public void setUp() {
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = port;
+        membershipRepository.deleteAll();
     }
 
     @Test
@@ -125,8 +126,8 @@ class MembershipAcceptanceTest {
 
         MembershipDetailResponse membership = response.as(MembershipDetailResponse.class);
         assertThat(membership.getId()).isEqualTo(info.getId());
-        assertThat(membership.getMembershipType()).isEqualTo(MembershipType.NAVER);
-        assertThat(membership.getPoint()).isEqualTo(10000);
+        assertThat(membership.getMembershipType()).isEqualTo(info.getMembershipType());
+        assertThat(membership.getPoint()).isEqualTo(info.getPoint());
         assertThat(membership.getCreatedAt()).isNotNull();
     }
 
