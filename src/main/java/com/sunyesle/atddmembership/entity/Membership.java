@@ -41,4 +41,8 @@ public class Membership {
         this.point = point;
         this.createdAt = createdAt;
     }
+
+    public void addPoint(int point) {
+        this.point += point;
+    }
 }

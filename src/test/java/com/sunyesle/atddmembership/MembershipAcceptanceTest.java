@@ -2,6 +2,7 @@ package com.sunyesle.atddmembership;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sunyesle.atddmembership.dto.MembershipAccumulateRequest;
 import com.sunyesle.atddmembership.dto.MembershipDetailResponse;
 import com.sunyesle.atddmembership.dto.MembershipRequest;
 import com.sunyesle.atddmembership.dto.MembershipResponse;
@@ -155,4 +156,32 @@ class MembershipAcceptanceTest {
 
         assertThat(membershipRepository.findById(info.getId())).isEmpty();
     }
+
+    @Test
+    void 멤버십을_적립한다() throws JsonProcessingException {
+        // given
+        String userId = "testUserId";
+        Membership info = membershipRepository.save(Membership.builder().userId(userId).membershipType(MembershipType.NAVER).point(10000).build());
+        MembershipAccumulateRequest request = new MembershipAccumulateRequest(20000);
+
+        // when
+        ExtractableResponse<Response> response =
+                given()
+                        .log().all()
+                        .basePath("/api/v1/memberships/" + info.getId() + "/accumulate")
+                        .contentType(ContentType.JSON)
+                        .header(USER_ID_HEADER, userId)
+                        .body(objectMapper.writeValueAsString(request))
+                .when()
+                        .delete()
+                .then()
+                        .log().all()
+                        .extract();
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+
+        assertThat(membershipRepository.findById(info.getId()).get().getPoint()).isEqualTo(10200);
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.sunyesle.atddmembership.service;
 
+import com.sunyesle.atddmembership.dto.MembershipAccumulateRequest;
 import com.sunyesle.atddmembership.dto.MembershipDetailResponse;
 import com.sunyesle.atddmembership.dto.MembershipRequest;
 import com.sunyesle.atddmembership.dto.MembershipResponse;
@@ -46,5 +47,18 @@ public class MembershipService {
             throw new MembershipException(MembershipErrorCode.NOT_MEMBERSHIP_OWNER);
         }
         membershipRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void accumulateMembership(String userId, Long id, MembershipAccumulateRequest request) {
+        Membership membership = membershipRepository.findById(id).orElseThrow(() -> new MembershipException(MembershipErrorCode.MEMBERSHIP_NOT_FOUND));
+        if (!userId.equals(membership.getUserId())) {
+            throw new MembershipException(MembershipErrorCode.NOT_MEMBERSHIP_OWNER);
+        }
+        membership.addPoint(calculatePoint(request.getAmount()));
+    }
+
+    private int calculatePoint(Integer amount) {
+        return amount / 100;
     }
 }

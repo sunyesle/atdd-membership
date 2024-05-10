@@ -1,5 +1,6 @@
 package com.sunyesle.atddmembership.controller;
 
+import com.sunyesle.atddmembership.dto.MembershipAccumulateRequest;
 import com.sunyesle.atddmembership.dto.MembershipDetailResponse;
 import com.sunyesle.atddmembership.dto.MembershipRequest;
 import com.sunyesle.atddmembership.dto.MembershipResponse;
@@ -41,6 +42,12 @@ public class MembershipController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMembership(@RequestHeader(USER_ID_HEADER) String userId, @PathVariable Long id) {
         membershipService.deleteMembership(userId, id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @DeleteMapping("/{id}/accumulate")
+    public ResponseEntity<Void> accumulateMembership(@RequestHeader(USER_ID_HEADER) String userId, @PathVariable Long id, @RequestBody MembershipAccumulateRequest request) {
+        membershipService.accumulateMembership(userId, id, request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
