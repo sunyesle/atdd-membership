@@ -1,6 +1,8 @@
 package com.sunyesle.atddmembership;
 
 import com.sunyesle.atddmembership.dto.MembershipDetailResponse;
+import com.sunyesle.atddmembership.dto.MembershipRequest;
+import com.sunyesle.atddmembership.dto.MembershipResponse;
 import com.sunyesle.atddmembership.entity.Membership;
 import com.sunyesle.atddmembership.enums.MembershipType;
 import com.sunyesle.atddmembership.exception.MembershipErrorCode;
@@ -19,6 +21,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,6 +37,23 @@ public class MembershipServiceTest {
     @BeforeEach
     void setUp() {
         membershipService = new MembershipService(repository, pointCalculator);
+    }
+
+    @Test
+    void 멤버십_등록을_성공한다(){
+        // given
+        String userId = "testUser";
+        MembershipType membershipType = MembershipType.NAVER;
+        Integer point = 10000;
+        MembershipRequest request = new MembershipRequest(membershipType, point);
+        given(repository.save(any()))
+                .willReturn(new Membership(1L, userId, membershipType, point, LocalDateTime.now()));
+
+        // when
+        MembershipResponse response = membershipService.createMembership(userId, request);
+
+        // then
+        assertThat(response.getMembershipType()).isEqualTo(membershipType);
     }
 
     @Test
