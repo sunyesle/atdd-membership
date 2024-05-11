@@ -24,8 +24,12 @@ public class MembershipService {
 
     @Transactional
     public MembershipResponse createMembership(String userId, MembershipRequest request) {
-        Membership membership = membershipRepository.save(Membership.builder().userId(userId).membershipType(request.getMembershipType()).point(request.getPoint()).build());
-        return new MembershipResponse(membership.getId(), membership.getMembershipType());
+        boolean exists = membershipRepository.existsByUserIdAndMembershipType(userId, request.getMembershipType());
+        if(exists){
+            throw new MembershipException(MembershipErrorCode.DUPLICATE_MEMBERSHIP);
+        }
+        Membership savedMembership = membershipRepository.save(Membership.builder().userId(userId).membershipType(request.getMembershipType()).point(request.getPoint()).build());
+        return new MembershipResponse(savedMembership.getId(), savedMembership.getMembershipType());
     }
 
     public List<MembershipDetailResponse> getMemberships(String userId) {

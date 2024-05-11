@@ -76,6 +76,32 @@ class MembershipAcceptanceTest {
     }
 
     @Test
+    void 존재하는_멤버십을_등록할_경우_등록을_실패한다() throws JsonProcessingException {
+        // given
+        String userId = "testUserId";
+        MembershipType membershipType = MembershipType.NAVER;
+        MembershipRequest request = new MembershipRequest(membershipType, 10000);
+        membershipRepository.save(Membership.builder().userId(userId).membershipType(membershipType).point(5000).build());
+
+        // when
+        ExtractableResponse<Response> response =
+                given()
+                        .log().all()
+                        .basePath("/api/v1/memberships")
+                        .contentType(ContentType.JSON)
+                        .header(USER_ID_HEADER, userId)
+                        .body(objectMapper.writeValueAsString(request))
+                .when()
+                        .post()
+                .then()
+                        .log().all()
+                        .extract();
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
     void 멤버십_목록을_조회한다() {
         // given
         String userId = "testUserId";

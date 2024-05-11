@@ -46,6 +46,8 @@ public class MembershipServiceTest {
         MembershipType membershipType = MembershipType.NAVER;
         Integer point = 10000;
         MembershipRequest request = new MembershipRequest(membershipType, point);
+        given(repository.existsByUserIdAndMembershipType(userId, membershipType))
+                .willReturn(false);
         given(repository.save(any()))
                 .willReturn(new Membership(1L, userId, membershipType, point, LocalDateTime.now()));
 
@@ -54,6 +56,21 @@ public class MembershipServiceTest {
 
         // then
         assertThat(response.getMembershipType()).isEqualTo(membershipType);
+    }
+
+    @Test
+    void 멤버십을_중복으로_등록할_경우_예외가_발생한다(){
+        // given
+        String userId = "testUser";
+        MembershipType membershipType = MembershipType.NAVER;
+        MembershipRequest request = new MembershipRequest(membershipType, 5000);
+        given(repository.existsByUserIdAndMembershipType(userId, membershipType))
+                .willReturn(true);
+
+        // when then
+        assertThatThrownBy(() -> { membershipService.createMembership(userId, request); })
+                .isInstanceOf(MembershipException.class)
+                .hasMessageContaining(MembershipErrorCode.DUPLICATE_MEMBERSHIP.getMessage());
     }
 
     @Test
