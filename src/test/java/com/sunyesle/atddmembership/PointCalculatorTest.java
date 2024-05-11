@@ -3,7 +3,11 @@ package com.sunyesle.atddmembership;
 import com.sunyesle.atddmembership.service.PercentagePointCalculator;
 import com.sunyesle.atddmembership.service.PointCalculator;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,10 +20,18 @@ class PointCalculatorTest {
         percentagePointCalculator = new PercentagePointCalculator();
     }
 
-    @Test
-    void 포인트를_계산한다(){
-        int point = percentagePointCalculator.calculatePoint(100);
+    @ParameterizedTest
+    @MethodSource("provideValue")
+    void 포인트를_계산한다(int amount, int expectedPoint){
+        int point = percentagePointCalculator.calculatePoint(amount);
 
-        assertThat(point).isEqualTo(1);
+        assertThat(point).isEqualTo(expectedPoint);
+    }
+
+    private static Stream<Arguments> provideValue() {
+        return Stream.of(Arguments.of(100, 1)
+                , Arguments.of(99, 0)
+                , Arguments.of(55555, 555)
+        );
     }
 }
