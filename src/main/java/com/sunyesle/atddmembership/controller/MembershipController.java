@@ -45,8 +45,8 @@ public class MembershipController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @DeleteMapping("/{id}/accumulate")
-    public ResponseEntity<Void> accumulateMembership(@RequestHeader(USER_ID_HEADER) String userId, @PathVariable Long id, @RequestBody MembershipAccumulateRequest request) {
+    @PostMapping("/{id}/accumulate")
+    public ResponseEntity<Void> accumulateMembership(@RequestHeader(USER_ID_HEADER) String userId, @PathVariable Long id, @Valid @RequestBody MembershipAccumulateRequest request) {
         membershipService.accumulateMembership(userId, id, request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
