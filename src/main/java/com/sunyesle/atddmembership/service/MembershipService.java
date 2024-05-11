@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MembershipService {
     private final MembershipRepository membershipRepository;
+    private final PointCalculator pointCalculator;
 
     @Transactional
     public MembershipResponse createMembership(String userId, MembershipRequest request) {
@@ -55,10 +56,6 @@ public class MembershipService {
         if (!userId.equals(membership.getUserId())) {
             throw new MembershipException(MembershipErrorCode.NOT_MEMBERSHIP_OWNER);
         }
-        membership.addPoint(calculatePoint(request.getAmount()));
-    }
-
-    private int calculatePoint(Integer amount) {
-        return amount / 100;
+        membership.addPoint(pointCalculator.calculatePoint(request.getAmount()));
     }
 }

@@ -7,6 +7,7 @@ import com.sunyesle.atddmembership.exception.MembershipErrorCode;
 import com.sunyesle.atddmembership.exception.MembershipException;
 import com.sunyesle.atddmembership.repository.MembershipRepository;
 import com.sunyesle.atddmembership.service.MembershipService;
+import com.sunyesle.atddmembership.service.PointCalculator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,11 +26,14 @@ public class MembershipServiceTest {
     @Mock
     private MembershipRepository repository;
 
+    @Mock
+    private PointCalculator pointCalculator;
+
     private MembershipService membershipService;
 
     @BeforeEach
     void setUp() {
-        membershipService = new MembershipService(repository);
+        membershipService = new MembershipService(repository, pointCalculator);
     }
 
     @Test
