@@ -173,7 +173,7 @@ class MembershipAcceptanceTest {
                         .header(USER_ID_HEADER, userId)
                         .body(objectMapper.writeValueAsString(request))
                 .when()
-                        .delete()
+                        .post()
                 .then()
                         .log().all()
                         .extract();
