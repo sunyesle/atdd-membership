@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -34,7 +33,7 @@ public class MembershipService {
 
     public List<MembershipDetailResponse> getMemberships(String userId) {
         List<Membership> memberships = membershipRepository.findAllByUserId(userId);
-        return memberships.stream().map(MembershipDetailResponse::of).collect(Collectors.toList());
+        return memberships.stream().map(MembershipDetailResponse::of).toList();
     }
 
     public MembershipDetailResponse getMembership(String userId, Long id) {
