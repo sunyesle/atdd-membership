@@ -5,16 +5,14 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @ToString
-public class Membership {
+public class Membership extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,20 +24,15 @@ public class Membership {
 
     private Integer point;
 
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
     public Membership() {
     }
 
     @Builder
-    public Membership(Long id, String userId, MembershipType membershipType, Integer point, LocalDateTime createdAt) {
+    public Membership(Long id, String userId, MembershipType membershipType, Integer point) {
         this.id = id;
         this.userId = userId;
         this.membershipType = membershipType;
         this.point = point;
-        this.createdAt = createdAt;
     }
 
     public void addPoint(int point) {

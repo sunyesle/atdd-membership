@@ -16,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-public class MembershipServiceTest {
+class MembershipServiceTest {
     @Mock
     private MembershipRepository repository;
 
@@ -49,7 +48,7 @@ public class MembershipServiceTest {
         given(repository.existsByUserIdAndMembershipType(userId, membershipType))
                 .willReturn(false);
         given(repository.save(any()))
-                .willReturn(new Membership(1L, userId, membershipType, point, LocalDateTime.now()));
+                .willReturn(new Membership(1L, userId, membershipType, point));
 
         // when
         MembershipResponse response = membershipService.createMembership(userId, request);
@@ -79,14 +78,13 @@ public class MembershipServiceTest {
         String userId = "testUser";
         Long membershipId = 1L;
         given(repository.findById(membershipId))
-                .willReturn(Optional.of(new Membership(membershipId, userId, MembershipType.NAVER, 10000, LocalDateTime.now())));
+                .willReturn(Optional.of(new Membership(membershipId, userId, MembershipType.NAVER, 10000)));
 
         // when
         MembershipDetailResponse response = membershipService.getMembership(userId, membershipId);
 
         // then
         assertThat(response.getId()).isEqualTo(membershipId);
-        assertThat(response.getCreatedAt()).isNotNull();
     }
 
     @Test
@@ -109,7 +107,7 @@ public class MembershipServiceTest {
         String userId = "testUser";
         Long membershipId = 1L;
         given(repository.findById(membershipId))
-                .willReturn(Optional.of(new Membership(membershipId, "anotherUser", MembershipType.NAVER, 10000, LocalDateTime.now())));
+                .willReturn(Optional.of(new Membership(membershipId, "anotherUser", MembershipType.NAVER, 10000)));
 
         // when then
         assertThatThrownBy(() -> { membershipService.getMembership(userId, membershipId); })
