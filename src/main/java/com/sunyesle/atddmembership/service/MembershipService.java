@@ -6,7 +6,7 @@ import com.sunyesle.atddmembership.dto.MembershipRequest;
 import com.sunyesle.atddmembership.dto.MembershipResponse;
 import com.sunyesle.atddmembership.entity.Membership;
 import com.sunyesle.atddmembership.exception.MembershipErrorCode;
-import com.sunyesle.atddmembership.exception.MembershipException;
+import com.sunyesle.atddmembership.exception.CustomException;
 import com.sunyesle.atddmembership.repository.MembershipRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class MembershipService {
     public MembershipResponse createMembership(String userId, MembershipRequest request) {
         boolean exists = membershipRepository.existsByUserIdAndMembershipType(userId, request.getMembershipType());
         if(exists){
-            throw new MembershipException(MembershipErrorCode.DUPLICATE_MEMBERSHIP);
+            throw new CustomException(MembershipErrorCode.DUPLICATE_MEMBERSHIP);
         }
         Membership savedMembership = membershipRepository.save(Membership.builder().userId(userId).membershipType(request.getMembershipType()).point(request.getPoint()).build());
         return new MembershipResponse(savedMembership.getId(), savedMembership.getMembershipType());
@@ -37,27 +37,27 @@ public class MembershipService {
     }
 
     public MembershipDetailResponse getMembership(String userId, Long id) {
-        Membership membership = membershipRepository.findById(id).orElseThrow(() -> new MembershipException(MembershipErrorCode.MEMBERSHIP_NOT_FOUND));
+        Membership membership = membershipRepository.findById(id).orElseThrow(() -> new CustomException(MembershipErrorCode.MEMBERSHIP_NOT_FOUND));
         if(!userId.equals(membership.getUserId())){
-            throw new MembershipException(MembershipErrorCode.NOT_MEMBERSHIP_OWNER);
+            throw new CustomException(MembershipErrorCode.NOT_MEMBERSHIP_OWNER);
         }
         return MembershipDetailResponse.of(membership);
     }
 
     @Transactional
     public void deleteMembership(String userId, Long id) {
-        Membership membership = membershipRepository.findById(id).orElseThrow(() -> new MembershipException(MembershipErrorCode.MEMBERSHIP_NOT_FOUND));
+        Membership membership = membershipRepository.findById(id).orElseThrow(() -> new CustomException(MembershipErrorCode.MEMBERSHIP_NOT_FOUND));
         if(!userId.equals(membership.getUserId())){
-            throw new MembershipException(MembershipErrorCode.NOT_MEMBERSHIP_OWNER);
+            throw new CustomException(MembershipErrorCode.NOT_MEMBERSHIP_OWNER);
         }
         membershipRepository.deleteById(id);
     }
 
     @Transactional
     public void accumulateMembership(String userId, Long id, MembershipAccumulateRequest request) {
-        Membership membership = membershipRepository.findById(id).orElseThrow(() -> new MembershipException(MembershipErrorCode.MEMBERSHIP_NOT_FOUND));
+        Membership membership = membershipRepository.findById(id).orElseThrow(() -> new CustomException(MembershipErrorCode.MEMBERSHIP_NOT_FOUND));
         if (!userId.equals(membership.getUserId())) {
-            throw new MembershipException(MembershipErrorCode.NOT_MEMBERSHIP_OWNER);
+            throw new CustomException(MembershipErrorCode.NOT_MEMBERSHIP_OWNER);
         }
         membership.addPoint(pointCalculator.calculatePoint(request.getAmount()));
     }

@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public enum MembershipErrorCode {
+public enum MembershipErrorCode implements ErrorCode {
     MEMBERSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, "멤버쉽이 존재하지 않습니다."),
     NOT_MEMBERSHIP_OWNER(HttpStatus.FORBIDDEN, "멤버십 접근 권한이 없습니다."),
     DUPLICATE_MEMBERSHIP(HttpStatus.BAD_REQUEST, "중복된 멤버십이 존재합니다.");

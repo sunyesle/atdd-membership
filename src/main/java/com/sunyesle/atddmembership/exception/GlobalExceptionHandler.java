@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -21,9 +20,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.of("METHOD_ARGUMENT_NOT_VALID", "유효성 검증 실패", ex));
     }
 
-    @ExceptionHandler(MembershipException.class)
-    public ResponseEntity<ErrorResponse> handleMembershipException(MembershipException e) {
-        log.error("MembershipException", e);
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ErrorResponse> handleMembershipException(CustomException e) {
+        log.error("CustomException", e);
         return createErrorResponseEntity(e.getErrorCode());
     }
 
@@ -34,13 +33,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(ErrorResponse.builder().code("INTERNAL_SERVER_ERROR").message("에러가 발생하였습니다").build());
     }
 
-    private ResponseEntity<ErrorResponse> createErrorResponseEntity(MembershipErrorCode errorCode){
+    private ResponseEntity<ErrorResponse> createErrorResponseEntity(ErrorCode errorCode){
         return ResponseEntity
                 .status(errorCode.getHttpStatus())
                 .body(createErrorResponse(errorCode));
     }
 
-    private ErrorResponse createErrorResponse(MembershipErrorCode errorCode){
+    private ErrorResponse createErrorResponse(ErrorCode errorCode){
         return ErrorResponse.builder()
                 .code(errorCode.name())
                 .message(errorCode.getMessage())

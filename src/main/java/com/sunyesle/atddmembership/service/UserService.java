@@ -3,6 +3,8 @@ package com.sunyesle.atddmembership.service;
 import com.sunyesle.atddmembership.dto.UserRequest;
 import com.sunyesle.atddmembership.dto.UserResponse;
 import com.sunyesle.atddmembership.entity.AppUser;
+import com.sunyesle.atddmembership.exception.CustomException;
+import com.sunyesle.atddmembership.exception.UserErrorCode;
 import com.sunyesle.atddmembership.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,7 +20,7 @@ public class UserService {
 
     public UserResponse createUser(UserRequest request) {
         if(userRepository.existsByUsername(request.getUsername())){
-            throw new RuntimeException("중복된 아이디가 존재합니다.");
+            throw new CustomException(UserErrorCode.DUPLICATE_USER);
         }
         AppUser user = new AppUser(request.getUsername(), encoder.encode(request.getPassword()));
         userRepository.save(user);
@@ -26,7 +28,7 @@ public class UserService {
     }
 
     public UserResponse getUser(Long id) {
-        AppUser user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+        AppUser user = userRepository.findById(id).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
         return UserResponse.of(user);
     }
 }

@@ -6,7 +6,7 @@ import com.sunyesle.atddmembership.dto.MembershipResponse;
 import com.sunyesle.atddmembership.entity.Membership;
 import com.sunyesle.atddmembership.enums.MembershipType;
 import com.sunyesle.atddmembership.exception.MembershipErrorCode;
-import com.sunyesle.atddmembership.exception.MembershipException;
+import com.sunyesle.atddmembership.exception.CustomException;
 import com.sunyesle.atddmembership.repository.MembershipRepository;
 import com.sunyesle.atddmembership.service.MembershipService;
 import com.sunyesle.atddmembership.service.PointCalculator;
@@ -68,7 +68,7 @@ class MembershipServiceTest {
 
         // when then
         assertThatThrownBy(() -> { membershipService.createMembership(userId, request); })
-                .isInstanceOf(MembershipException.class)
+                .isInstanceOf(CustomException.class)
                 .hasMessageContaining(MembershipErrorCode.DUPLICATE_MEMBERSHIP.getMessage());
     }
 
@@ -97,7 +97,7 @@ class MembershipServiceTest {
 
         // when then
         assertThatThrownBy(() -> { membershipService.getMembership(userId, membershipId); })
-                .isInstanceOf(MembershipException.class)
+                .isInstanceOf(CustomException.class)
                 .hasMessageContaining(MembershipErrorCode.MEMBERSHIP_NOT_FOUND.getMessage());
     }
 
@@ -111,7 +111,7 @@ class MembershipServiceTest {
 
         // when then
         assertThatThrownBy(() -> { membershipService.getMembership(userId, membershipId); })
-                .isInstanceOf(MembershipException.class)
+                .isInstanceOf(CustomException.class)
                 .hasMessageContaining(MembershipErrorCode.NOT_MEMBERSHIP_OWNER.getMessage());
     }
 }
