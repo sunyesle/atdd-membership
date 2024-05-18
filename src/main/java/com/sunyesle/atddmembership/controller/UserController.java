@@ -22,8 +22,14 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> createUser(@PathVariable Long id) {
+    public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
         UserResponse response = userService.getUser(id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<UserResponse> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

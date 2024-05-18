@@ -31,4 +31,8 @@ public class UserService {
         AppUser user = userRepository.findById(id).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
         return UserResponse.of(user);
     }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
 }

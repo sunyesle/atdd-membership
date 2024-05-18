@@ -94,4 +94,29 @@ class UserAcceptanceTest {
         assertThat(user.getId()).isNotNull();
         assertThat(user.getUsername()).isEqualTo(username);
     }
+
+    @Test
+    void 회원_정보를_삭제한다(){
+        // given
+        String username = "testUser";
+        String password = "password";
+        AppUser info = userRepository.save(new AppUser(username, password));
+
+        // when
+        ExtractableResponse<Response> response =
+                given()
+                        .log().all()
+                        .basePath("/api/v1/users/" + info.getId())
+                        .contentType(ContentType.JSON)
+                .when()
+                        .delete()
+                .then()
+                        .log().all()
+                        .extract();
+
+        // then
+        Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+
+        assertThat(userRepository.findById(info.getId())).isEmpty();
+    }
 }
