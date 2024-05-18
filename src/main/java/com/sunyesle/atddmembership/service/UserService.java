@@ -3,7 +3,6 @@ package com.sunyesle.atddmembership.service;
 import com.sunyesle.atddmembership.dto.UserRequest;
 import com.sunyesle.atddmembership.dto.UserResponse;
 import com.sunyesle.atddmembership.entity.AppUser;
-import com.sunyesle.atddmembership.exception.MembershipException;
 import com.sunyesle.atddmembership.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +22,11 @@ public class UserService {
         }
         AppUser user = new AppUser(request.getUsername(), encoder.encode(request.getPassword()));
         userRepository.save(user);
+        return UserResponse.of(user);
+    }
+
+    public UserResponse getUser(Long id) {
+        AppUser user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
         return UserResponse.of(user);
     }
 }

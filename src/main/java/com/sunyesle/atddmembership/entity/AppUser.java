@@ -20,6 +20,9 @@ public class AppUser extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    public AppUser() {
+    }
+
     public AppUser(String username, String password) {
         this.username = username;
         this.password = password;
