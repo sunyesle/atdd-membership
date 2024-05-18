@@ -2,6 +2,7 @@ package com.sunyesle.atddmembership;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sunyesle.atddmembership.config.SecurityConfig;
 import com.sunyesle.atddmembership.controller.MembershipController;
 import com.sunyesle.atddmembership.dto.MembershipAccumulateRequest;
 import com.sunyesle.atddmembership.dto.MembershipRequest;
@@ -13,6 +14,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,6 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @WebMvcTest(MembershipController.class)
+@Import(SecurityConfig.class)
 class MembershipControllerTest {
 
     @Autowired
