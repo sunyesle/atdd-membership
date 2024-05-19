@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum UserErrorCode implements ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원정보가 존재하지 않습니다."),
-    DUPLICATE_USER(HttpStatus.BAD_REQUEST, "중복된 회원이 존재합니다.");
+    DUPLICATE_USER(HttpStatus.BAD_REQUEST, "중복된 회원이 존재합니다."),
+    USER_LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 일치하지 않습니다."),
+    ;
 
     private final HttpStatus httpStatus;
     private final String message;
