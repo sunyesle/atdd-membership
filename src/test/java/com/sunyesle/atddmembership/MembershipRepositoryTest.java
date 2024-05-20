@@ -26,7 +26,7 @@ class MembershipRepositoryTest {
 
     @Test
     void save(){
-        Membership membership = new Membership(null, "testUser", MembershipType.NAVER, 10000);
+        Membership membership = new Membership(null, 1L, MembershipType.NAVER, 10000);
 
         membershipRepository.save(membership);
 

@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface MembershipRepository extends JpaRepository<Membership, Long> {
-    List<Membership> findAllByUserId(String userId);
+    List<Membership> findAllByUserId(Long userId);
 
-    boolean existsByUserIdAndMembershipType(String userId, MembershipType membershipType);
+    boolean existsByUserIdAndMembershipType(Long userId, MembershipType membershipType);
 }

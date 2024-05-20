@@ -15,7 +15,7 @@ public class Membership extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String userId;
+    private Long userId;
 
     @Enumerated(EnumType.STRING)
     private MembershipType membershipType;
@@ -26,7 +26,7 @@ public class Membership extends BaseEntity {
     }
 
     @Builder
-    public Membership(Long id, String userId, MembershipType membershipType, Integer point) {
+    public Membership(Long id, Long userId, MembershipType membershipType, Integer point) {
         this.id = id;
         this.userId = userId;
         this.membershipType = membershipType;

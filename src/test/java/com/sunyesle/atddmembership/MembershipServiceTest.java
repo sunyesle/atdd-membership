@@ -25,6 +25,9 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class MembershipServiceTest {
+
+    private static final Long USER_ID = 1L;
+
     @Mock
     private MembershipRepository repository;
 
@@ -41,17 +44,16 @@ class MembershipServiceTest {
     @Test
     void 멤버십_등록을_성공한다(){
         // given
-        String userId = "testUser";
         MembershipType membershipType = MembershipType.NAVER;
         Integer point = 10000;
         MembershipRequest request = new MembershipRequest(membershipType, point);
-        given(repository.existsByUserIdAndMembershipType(userId, membershipType))
+        given(repository.existsByUserIdAndMembershipType(USER_ID, membershipType))
                 .willReturn(false);
         given(repository.save(any()))
-                .willReturn(new Membership(1L, userId, membershipType, point));
+                .willReturn(new Membership(1L, USER_ID, membershipType, point));
 
         // when
-        MembershipResponse response = membershipService.createMembership(userId, request);
+        MembershipResponse response = membershipService.createMembership(USER_ID, request);
 
         // then
         assertThat(response.getMembershipType()).isEqualTo(membershipType);
@@ -60,14 +62,13 @@ class MembershipServiceTest {
     @Test
     void 멤버십을_중복으로_등록할_경우_예외가_발생한다(){
         // given
-        String userId = "testUser";
         MembershipType membershipType = MembershipType.NAVER;
         MembershipRequest request = new MembershipRequest(membershipType, 5000);
-        given(repository.existsByUserIdAndMembershipType(userId, membershipType))
+        given(repository.existsByUserIdAndMembershipType(USER_ID, membershipType))
                 .willReturn(true);
 
         // when then
-        assertThatThrownBy(() -> { membershipService.createMembership(userId, request); })
+        assertThatThrownBy(() -> { membershipService.createMembership(USER_ID, request); })
                 .isInstanceOf(CustomException.class)
                 .hasMessageContaining(MembershipErrorCode.DUPLICATE_MEMBERSHIP.getMessage());
     }
@@ -75,13 +76,12 @@ class MembershipServiceTest {
     @Test
     void 멤버십_조회를_성공한다(){
         // given
-        String userId = "testUser";
         Long membershipId = 1L;
         given(repository.findById(membershipId))
-                .willReturn(Optional.of(new Membership(membershipId, userId, MembershipType.NAVER, 10000)));
+                .willReturn(Optional.of(new Membership(membershipId, USER_ID, MembershipType.NAVER, 10000)));
 
         // when
-        MembershipDetailResponse response = membershipService.getMembership(userId, membershipId);
+        MembershipDetailResponse response = membershipService.getMembership(USER_ID, membershipId);
 
         // then
         assertThat(response.getId()).isEqualTo(membershipId);
@@ -90,13 +90,12 @@ class MembershipServiceTest {
     @Test
     void 존재하지_않는_멤버십을_조회할_경우_예외가_발생한다(){
         // given
-        String userId = "testUser";
         Long membershipId = 1L;
         given(repository.findById(membershipId))
                 .willReturn(Optional.empty());
 
         // when then
-        assertThatThrownBy(() -> { membershipService.getMembership(userId, membershipId); })
+        assertThatThrownBy(() -> { membershipService.getMembership(USER_ID, membershipId); })
                 .isInstanceOf(CustomException.class)
                 .hasMessageContaining(MembershipErrorCode.MEMBERSHIP_NOT_FOUND.getMessage());
     }
@@ -104,13 +103,12 @@ class MembershipServiceTest {
     @Test
     void 권한이_없는_멤버십을_조회할_경우_예외가_발생한다(){
         // given
-        String userId = "testUser";
         Long membershipId = 1L;
         given(repository.findById(membershipId))
-                .willReturn(Optional.of(new Membership(membershipId, "anotherUser", MembershipType.NAVER, 10000)));
+                .willReturn(Optional.of(new Membership(membershipId, 2L, MembershipType.NAVER, 10000)));
 
         // when then
-        assertThatThrownBy(() -> { membershipService.getMembership(userId, membershipId); })
+        assertThatThrownBy(() -> { membershipService.getMembership(USER_ID, membershipId); })
                 .isInstanceOf(CustomException.class)
                 .hasMessageContaining(MembershipErrorCode.NOT_MEMBERSHIP_OWNER.getMessage());
     }
