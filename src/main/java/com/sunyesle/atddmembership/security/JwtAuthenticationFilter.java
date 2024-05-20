@@ -1,6 +1,5 @@
 package com.sunyesle.atddmembership.security;
 
-import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,6 +46,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private Authentication getAuthentication(String token) {
         Long userId = jwtTokenProvider.getUserIdFromToken(token);
         UserDetails userDetails = userDetailService.loadUserByUsername(userId.toString());
-        return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }
