@@ -4,6 +4,7 @@ import com.sunyesle.atddmembership.dto.UserRequest;
 import com.sunyesle.atddmembership.dto.UserResponse;
 import com.sunyesle.atddmembership.security.CustomUserDetails;
 import com.sunyesle.atddmembership.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest request) {
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest request) {
         UserResponse response = userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

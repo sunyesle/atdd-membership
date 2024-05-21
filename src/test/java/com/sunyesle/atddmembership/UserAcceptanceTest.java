@@ -44,8 +44,8 @@ class UserAcceptanceTest {
     @Test
     void 회원가입을_한다() {
         // given
-        String username = "testUsername";
-        String password = "password";
+        String username = "username1";
+        String password = "password1";
         UserRequest request = new UserRequest(username, password);
 
         // when
@@ -59,28 +59,11 @@ class UserAcceptanceTest {
         assertThat(user.getUsername()).isEqualTo(username);
     }
 
-    private ExtractableResponse<Response> 회원가입_요청(UserRequest request) {
-        Map<String, String> params = new HashMap<>();
-        params.put("username", request.getUsername());
-        params.put("password", request.getPassword());
-
-        return given()
-                .log().all()
-                .basePath("/api/v1/users")
-                .contentType(ContentType.JSON)
-                .body(params)
-            .when()
-                .post()
-            .then()
-                .log().all()
-                .extract();
-    }
-
     @Test
     void 회원_정보를_조회한다(){
         // given
-        String username = "testUsername";
-        String password = "password";
+        String username = "username1";
+        String password = "password1";
         ExtractableResponse<Response> userSaveResponse = 회원가입_요청(new UserRequest(username, password));
         UserResponse savedUser = userSaveResponse.as(UserResponse.class);
         String token = 로그인_요청(username, password);
@@ -109,8 +92,8 @@ class UserAcceptanceTest {
     @Test
     void 회원_정보를_삭제한다(){
         // given
-        String username = "testUsername";
-        String password = "password";
+        String username = "username1";
+        String password = "password1";
         ExtractableResponse<Response> userSaveResponse = 회원가입_요청(new UserRequest(username, password));
         UserResponse savedUser = userSaveResponse.as(UserResponse.class);
         String token = 로그인_요청(username, password);
@@ -132,6 +115,23 @@ class UserAcceptanceTest {
         Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
 
         assertThat(userRepository.findById(savedUser.getId())).isEmpty();
+    }
+
+    private ExtractableResponse<Response> 회원가입_요청(UserRequest request) {
+        Map<String, String> params = new HashMap<>();
+        params.put("username", request.getUsername());
+        params.put("password", request.getPassword());
+
+        return given()
+                .log().all()
+                .basePath("/api/v1/users")
+                .contentType(ContentType.JSON)
+                .body(params)
+                .when()
+                .post()
+                .then()
+                .log().all()
+                .extract();
     }
 
     private String 로그인_요청(String username, String password) {

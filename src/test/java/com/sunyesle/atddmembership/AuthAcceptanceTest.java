@@ -25,6 +25,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AuthAcceptanceTest {
 
+    private final static String USERNAME = "username1";
+    private final static String PASSWORD = "password1";
+
     @Autowired
     private UserRepository userRepository;
 
@@ -41,16 +44,15 @@ class AuthAcceptanceTest {
     public void setUp() {
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = port;
+
         userRepository.deleteAll();
+        userRepository.save(new AppUser(USERNAME, encoder.encode(PASSWORD)));
     }
 
     @Test
     void 로그인을_성공한다() throws JsonProcessingException {
         // given
-        String username = "testUser";
-        String password = "password";
-        AppUser info = userRepository.save(new AppUser(username, encoder.encode(password)));
-        LoginRequest loginRequest = new LoginRequest(username, password);
+        LoginRequest loginRequest = new LoginRequest(USERNAME, PASSWORD);
 
         // when
         ExtractableResponse<Response> response =
@@ -76,8 +78,7 @@ class AuthAcceptanceTest {
     void 잘못된_아이디일_경우_로그인을_실패한다() throws JsonProcessingException {
         // given
         String incorrectUsername = "incorrectUser";
-        String password = "password";
-        LoginRequest loginRequest = new LoginRequest(incorrectUsername, password);
+        LoginRequest loginRequest = new LoginRequest(incorrectUsername, PASSWORD);
 
         // when
         ExtractableResponse<Response> response =
@@ -99,11 +100,8 @@ class AuthAcceptanceTest {
     @Test
     void 잘못된_비밀번호일_경우_로그인을_실패한다() throws JsonProcessingException {
         // given
-        String username = "testUser";
-        String password = "password";
         String incorrectPassword = "incorrectPassword";
-        AppUser info = userRepository.save(new AppUser(username, encoder.encode(password)));
-        LoginRequest loginRequest = new LoginRequest(username, incorrectPassword);
+        LoginRequest loginRequest = new LoginRequest(USERNAME, incorrectPassword);
 
         // when
         ExtractableResponse<Response> response =

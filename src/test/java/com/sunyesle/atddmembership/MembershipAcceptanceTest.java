@@ -30,8 +30,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class MembershipAcceptanceTest {
 
-    private static final String USERNAME = "user1";
-    private static final String PASSWORD = "password";
+    private static final String USERNAME = "username1";
+    private static final String PASSWORD = "password1";
 
     @Autowired
     MembershipRepository membershipRepository;

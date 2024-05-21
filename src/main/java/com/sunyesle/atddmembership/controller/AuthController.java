@@ -3,6 +3,7 @@ package com.sunyesle.atddmembership.controller;
 import com.sunyesle.atddmembership.dto.LoginRequest;
 import com.sunyesle.atddmembership.dto.TokenResponse;
 import com.sunyesle.atddmembership.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
         TokenResponse response = authService.login(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
