@@ -1,6 +1,6 @@
-package com.sunyesle.atddmembership;
+package com.sunyesle.atddmembership.validation;
 
-import com.sunyesle.atddmembership.dto.UserRequest;
+import com.sunyesle.atddmembership.dto.MembershipAccumulateRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserRequestValidationTest {
+class MembershipAccumulateRequestValidationTest {
 
     @Autowired
     private Validator validator;
@@ -30,45 +30,39 @@ class UserRequestValidationTest {
     }
 
     @Test
-    void UserRequest_유효성_검사_성공() {
-        UserRequest dto = getValidDto();
+    void MembershipAccumulateRequest_유효성_검사_성공() {
+        MembershipAccumulateRequest dto = getValidDto();
 
-        Set<ConstraintViolation<UserRequest>> constraintViolations = validator.validate(dto);
+        Set<ConstraintViolation<MembershipAccumulateRequest>> constraintViolations = validator.validate(dto);
 
         assertThat(constraintViolations).isEmpty();
     }
 
     static Stream<Arguments> provideFieldAndInvalidValue() {
         return Stream.of(
-                Arguments.of("username", null),
-                Arguments.of("username", "A1"),
-                Arguments.of("username", "abcd@123"),
-                Arguments.of("password", null),
-                Arguments.of("password", "password"),
-                Arguments.of("password", "12345678"),
-                Arguments.of("password", "pass1"),
-                Arguments.of("password", "thisisaverylongpassword123")
+                Arguments.of("amount", null),
+                Arguments.of("amount", -1)
         );
     }
 
     @ParameterizedTest
     @MethodSource("provideFieldAndInvalidValue")
-    void UserRequest_유효성_검사_실패(String fieldName, Object invalidValue) throws NoSuchFieldException, IllegalAccessException {
-        UserRequest dto = getValidDto();
-        Field field = UserRequest.class.getDeclaredField(fieldName);
+    void MembershipAccumulateRequest_유효성_검사_실패(String fieldName, Object invalidValue) throws NoSuchFieldException, IllegalAccessException {
+        MembershipAccumulateRequest dto = getValidDto();
+        Field field = MembershipAccumulateRequest.class.getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(dto, invalidValue);
 
-        Set<ConstraintViolation<UserRequest>> violations = validator.validate(dto);
+        Set<ConstraintViolation<MembershipAccumulateRequest>> violations = validator.validate(dto);
 
         assertThat(violations.size()).isOne();
         System.out.println(dto);
-        for (ConstraintViolation<UserRequest> violation : violations) {
+        for (ConstraintViolation<MembershipAccumulateRequest> violation : violations) {
             System.out.println(violation.getMessage());
         }
     }
 
-    private UserRequest getValidDto() {
-        return new UserRequest("username1", "passowrd1");
+    private MembershipAccumulateRequest getValidDto() {
+        return new MembershipAccumulateRequest(10000);
     }
 }

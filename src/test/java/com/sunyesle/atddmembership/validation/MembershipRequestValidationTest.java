@@ -1,4 +1,4 @@
-package com.sunyesle.atddmembership;
+package com.sunyesle.atddmembership.validation;
 
 import com.sunyesle.atddmembership.dto.MembershipRequest;
 import com.sunyesle.atddmembership.enums.MembershipType;

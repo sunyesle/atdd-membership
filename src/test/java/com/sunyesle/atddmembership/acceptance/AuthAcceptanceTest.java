@@ -1,4 +1,4 @@
-package com.sunyesle.atddmembership;
+package com.sunyesle.atddmembership.acceptance;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
