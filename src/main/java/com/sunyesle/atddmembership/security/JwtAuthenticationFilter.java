@@ -13,16 +13,25 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.stream.Stream;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
-
     private final UserDetailsService userDetailService;
+    private final String[] shouldNotFilterPatterns;
 
-    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailService) {
+    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailService, String[] shouldNotFilterPatterns) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userDetailService = userDetailService;
+        this.shouldNotFilterPatterns = shouldNotFilterPatterns;
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return Stream
+                .of(shouldNotFilterPatterns)
+                .anyMatch(request.getRequestURI()::startsWith);
     }
 
     @Override
