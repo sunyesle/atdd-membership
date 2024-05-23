@@ -1,7 +1,8 @@
 package com.sunyesle.atddmembership.acceptance;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sunyesle.atddmembership.dto.*;
+import com.sunyesle.atddmembership.dto.TokenResponse;
+import com.sunyesle.atddmembership.dto.UserRequest;
+import com.sunyesle.atddmembership.dto.UserResponse;
 import com.sunyesle.atddmembership.repository.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -28,9 +29,6 @@ class UserAcceptanceTest {
     @Autowired
     UserRepository userRepository;
 
-    @Autowired
-    ObjectMapper objectMapper;
-
     @LocalServerPort
     private int port;
 
@@ -39,24 +37,6 @@ class UserAcceptanceTest {
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = port;
         userRepository.deleteAll();
-    }
-
-    @Test
-    void 회원가입을_한다() {
-        // given
-        String username = "username1";
-        String password = "password1";
-        UserRequest request = new UserRequest(username, password);
-
-        // when
-        ExtractableResponse<Response> response = 회원가입_요청(request);
-
-        // then
-        Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
-
-        UserResponse user = response.as(UserResponse.class);
-        assertThat(user.getId()).isNotNull();
-        assertThat(user.getUsername()).isEqualTo(username);
     }
 
     @Test
@@ -124,7 +104,7 @@ class UserAcceptanceTest {
 
         return given()
                 .log().all()
-                .basePath("/api/v1/users")
+                .basePath("/api/v1/auth/signup")
                 .contentType(ContentType.JSON)
                 .body(params)
                 .when()

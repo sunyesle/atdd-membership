@@ -1,10 +1,10 @@
 package com.sunyesle.atddmembership.acceptance;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sunyesle.atddmembership.dto.LoginRequest;
 import com.sunyesle.atddmembership.dto.TokenResponse;
-import com.sunyesle.atddmembership.entity.AppUser;
+import com.sunyesle.atddmembership.dto.UserRequest;
+import com.sunyesle.atddmembership.dto.UserResponse;
 import com.sunyesle.atddmembership.repository.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -17,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,12 +33,6 @@ class AuthAcceptanceTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    PasswordEncoder encoder;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
     @LocalServerPort
     private int port;
 
@@ -46,26 +42,32 @@ class AuthAcceptanceTest {
         RestAssured.port = port;
 
         userRepository.deleteAll();
-        userRepository.save(new AppUser(USERNAME, encoder.encode(PASSWORD)));
+    }
+
+    @Test
+    void 회원가입을_한다() throws JsonProcessingException {
+        // given
+        UserRequest request = new UserRequest(USERNAME, PASSWORD);
+
+        // when
+        ExtractableResponse<Response> response = 회원가입_요청(request);
+
+        // then
+        Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+
+        UserResponse user = response.as(UserResponse.class);
+        assertThat(user.getId()).isNotNull();
+        assertThat(user.getUsername()).isEqualTo(USERNAME);
     }
 
     @Test
     void 로그인을_성공한다() throws JsonProcessingException {
         // given
+        회원가입_요청(new UserRequest(USERNAME, PASSWORD));
         LoginRequest loginRequest = new LoginRequest(USERNAME, PASSWORD);
 
         // when
-        ExtractableResponse<Response> response =
-                given()
-                        .log().all()
-                        .basePath("/api/v1/auth/login")
-                        .contentType(ContentType.JSON)
-                        .body(objectMapper.writeValueAsString(loginRequest))
-                .when()
-                        .post()
-                .then()
-                        .log().all()
-                        .extract();
+        ExtractableResponse<Response> response = 로그인_요청(loginRequest);
 
         // then
         Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
@@ -77,21 +79,12 @@ class AuthAcceptanceTest {
     @Test
     void 잘못된_아이디일_경우_로그인을_실패한다() throws JsonProcessingException {
         // given
-        String incorrectUsername = "incorrectUser";
+        회원가입_요청(new UserRequest(USERNAME, PASSWORD));
+        String incorrectUsername = "incorrectUser1";
         LoginRequest loginRequest = new LoginRequest(incorrectUsername, PASSWORD);
 
         // when
-        ExtractableResponse<Response> response =
-                given()
-                        .log().all()
-                        .basePath("/api/v1/auth/login")
-                        .contentType(ContentType.JSON)
-                        .body(objectMapper.writeValueAsString(loginRequest))
-                .when()
-                        .post()
-                .then()
-                        .log().all()
-                        .extract();
+        ExtractableResponse<Response> response = 로그인_요청(loginRequest);
 
         // then
         Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
@@ -104,19 +97,43 @@ class AuthAcceptanceTest {
         LoginRequest loginRequest = new LoginRequest(USERNAME, incorrectPassword);
 
         // when
-        ExtractableResponse<Response> response =
-                given()
-                        .log().all()
-                        .basePath("/api/v1/auth/login")
-                        .contentType(ContentType.JSON)
-                        .body(objectMapper.writeValueAsString(loginRequest))
-                .when()
-                        .post()
-                .then()
-                        .log().all()
-                        .extract();
+        ExtractableResponse<Response> response = 로그인_요청(loginRequest);
 
         // then
         Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+    }
+
+    private ExtractableResponse<Response> 회원가입_요청(UserRequest request) {
+        Map<String, String> params = new HashMap<>();
+        params.put("username", request.getUsername());
+        params.put("password", request.getPassword());
+
+        return given()
+                .log().all()
+                .basePath("/api/v1/auth/signup")
+                .contentType(ContentType.JSON)
+                .body(params)
+            .when()
+                .post()
+            .then()
+                .log().all()
+                .extract();
+    }
+
+    private ExtractableResponse<Response> 로그인_요청(LoginRequest loginRequest) {
+        Map<String, String> params = new HashMap<>();
+        params.put("username", loginRequest.getUsername());
+        params.put("password", loginRequest.getPassword());
+
+        return given()
+                .log().all()
+                .basePath("/api/v1/auth/login")
+                .contentType(ContentType.JSON)
+                .body(params)
+            .when()
+                .post()
+            .then()
+                .log().all()
+                .extract();
     }
 }
