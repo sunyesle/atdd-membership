@@ -13,7 +13,7 @@ public class UserAuditorAware implements AuditorAware<Long> {
     public Optional<Long> getCurrentAuditor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication.getPrincipal().equals("anonymousUser")) {
+        if (authentication == null || authentication.getPrincipal().equals("anonymousUser")) {
             return Optional.empty();
         }
 
