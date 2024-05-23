@@ -1,5 +1,7 @@
 package com.sunyesle.atddmembership.config;
 
+import com.sunyesle.atddmembership.security.CustomAccessDeniedHandler;
+import com.sunyesle.atddmembership.security.CustomAuthenticationEntryPoint;
 import com.sunyesle.atddmembership.security.JwtAuthenticationFilter;
 import com.sunyesle.atddmembership.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -42,9 +44,14 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(PERMIT_ALL_PATTERNS).permitAll()
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().hasRole("USER")
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService, PERMIT_ALL_PATTERNS), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                        .accessDeniedHandler(new CustomAccessDeniedHandler())
+                )
         ;
         return http.build();
     }
