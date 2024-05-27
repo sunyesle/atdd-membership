@@ -9,34 +9,32 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 //@SecurityScheme(
-//        name = "Authorization",
+//        name = "bearerAuth",
 //        type = SecuritySchemeType.HTTP,
 //        scheme = "bearer",
 //        bearerFormat = "JWT"
 //)
 //@OpenAPIDefinition(
 //        info = @Info(title = "멤버십 적립 서비스 API"),
-//        security = @SecurityRequirement(name = "Authorization")
+//        security = @SecurityRequirement(name = "bearerAuth")
 //)
 @Configuration
 public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        SecurityScheme securityScheme = new SecurityScheme()
-                .type(SecurityScheme.Type.HTTP)
-                .scheme("bearer")
-                .bearerFormat("JWT")
-                .name("Authorization");
-
-        SecurityRequirement securityRequirement = new SecurityRequirement()
-                .addList("Bearer Token");
+        final String securitySchemeName = "bearerAuth";
 
         return new OpenAPI()
                 .components(new Components()
-                        .addSecuritySchemes("Bearer Token", securityScheme)
+                        .addSecuritySchemes(securitySchemeName, new SecurityScheme()
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")
+                                .name(securitySchemeName))
                 )
-                .addSecurityItem(securityRequirement)
+                .addSecurityItem(new SecurityRequirement()
+                        .addList(securitySchemeName))
                 .info(new Info()
                         .title("멤버십 적립 서비스 API")
                 );
