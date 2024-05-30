@@ -10,23 +10,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.stream.Stream;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final String[] shouldNotFilterPatterns;
 
-    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, String[] shouldNotFilterPatterns) {
+    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
-        this.shouldNotFilterPatterns = shouldNotFilterPatterns;
-    }
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        return Stream
-                .of(shouldNotFilterPatterns)
-                .anyMatch(request.getRequestURI()::startsWith);
     }
 
     @Override
