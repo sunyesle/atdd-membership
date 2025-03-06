@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sunyesle.atddmembership.dto.*;
 import com.sunyesle.atddmembership.entity.AppUser;
 import com.sunyesle.atddmembership.enums.MembershipType;
+import com.sunyesle.atddmembership.exception.ErrorResponse;
 import com.sunyesle.atddmembership.repository.MembershipRepository;
 import com.sunyesle.atddmembership.repository.UserRepository;
 import io.restassured.RestAssured;
@@ -75,6 +76,32 @@ class MembershipAcceptanceTest {
         MembershipResponse membership = response.as(MembershipResponse.class);
         assertThat(membership.getId()).isNotNull();
         assertThat(membership.getMembershipType()).isEqualTo(membershipType);
+    }
+
+    @Test
+    void 유효하지_않은_타입의_멤버십을_등록할_경우_등록을_실패한다() {
+        // given
+        String token = 로그인_요청();
+        String body = "{\"membershipType\": \"INVALID\", \"point\": \"10000\"}";
+
+        // when
+        ExtractableResponse<Response> response =
+                given()
+                    .log().all()
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .basePath("/api/v1/memberships")
+                    .contentType(ContentType.JSON)
+                    .body(body)
+                .when()
+                    .post()
+                .then()
+                    .log().all()
+                    .extract();
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        ErrorResponse errorResponse = response.as(ErrorResponse.class);
+        assertThat(errorResponse.getCode()).isEqualTo("METHOD_ARGUMENT_NOT_VALID");
     }
 
     @Test
