@@ -1,6 +1,7 @@
 package com.sunyesle.atddmembership.dto;
 
 import com.sunyesle.atddmembership.enums.MembershipType;
+import com.sunyesle.atddmembership.validation.ValidEnum;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -9,7 +10,8 @@ import lombok.ToString;
 @Getter
 @ToString
 public class MembershipRequest {
-    @NotNull
+
+    @ValidEnum
     private final MembershipType membershipType;
 
     @NotNull
